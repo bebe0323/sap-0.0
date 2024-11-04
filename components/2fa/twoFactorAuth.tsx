@@ -43,7 +43,10 @@ export default function TwoFactorForm({user}: {user: TypeUserClient}) {
           }
           {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
         </div>
-        <Button disabled={isLoading}>Submit</Button>
+        <Button disabled={isLoading}>
+        {isLoading && <p>Submitting</p>}
+        {!isLoading && <p>Submit</p>}
+        </Button>
       </form>
     </div>
   )
