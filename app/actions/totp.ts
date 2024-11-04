@@ -59,6 +59,9 @@ export async function totpUpdate(faChecked: boolean) {
 
 export async function totpCheck(token: string | undefined) {
   try {
+    const currentTime = new Date();
+    console.log("Current Time:", currentTime.toLocaleString());
+    //
     if (!token) throw "empty token";
     const jwtPayload = await getJwtPayload();
     if (!jwtPayload) return false;
@@ -67,8 +70,13 @@ export async function totpCheck(token: string | undefined) {
     if (!userDb) {
       return false;
     }
-    const isValid = totp.check(token, userDb.totpSecretKey!);
-    return isValid;
+    console.log('user typed: ' + token);
+    console.log('db secretkey' + userDb.totpSecretKey);
+    // const isValid = totp.check(token, userDb.totpSecretKey!);
+    const serverToken = authenticator.generate(userDb.totpSecretKey!);
+    console.log('servertoken: ' + serverToken);
+    return serverToken === token;
+    // return isValid;
   } catch (err) {
     return false;
   }

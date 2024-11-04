@@ -14,7 +14,7 @@ export default function Page() {
     setIsLoading(true);
     setError(null);
     const formData = new FormData(event.currentTarget);
-    const res = totpCheck(formData.get("token")?.toString());
+    const res = await totpCheck(formData.get("token")?.toString());
     console.log(res);
 
     setIsLoading(false);
