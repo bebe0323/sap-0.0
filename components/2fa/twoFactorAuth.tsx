@@ -37,7 +37,7 @@ export default function TwoFactorForm({user}: {user: TypeUserClient}) {
           <Switch checked={faChecked} onCheckedChange={setFaChecked} />
           {totpSecret &&
             <div>
-              <p>Secret key for TOTP (don't share with anyone)</p>
+              <p>Secret key for TOTP (don&apos;t share with anyone)</p>
               {totpSecret}
             </div>
           }
