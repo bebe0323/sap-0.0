@@ -31,4 +31,5 @@ export type JwtPayloadType = {
   userId: string;
   exp: number;
   totpEnabled: boolean;
+  totpDone: boolean;
 }

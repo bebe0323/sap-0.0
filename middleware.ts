@@ -2,12 +2,13 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
 import { cookies } from 'next/headers';
 import { jwtVerify, SignJWT } from 'jose';
+import { JwtPayloadType } from './app/types/user';
 
 const SECRET = new TextEncoder().encode(process.env.JSON_KEY!);
  
 export async function middleware(request: NextRequest) {
   const cookieStore = cookies();
-  const authCookie = (await cookieStore).get("auth")?.value;
+  const authCookie = cookieStore.get("auth")?.value;
   
   // unauthenticated user
   if (!authCookie) {
@@ -24,7 +25,8 @@ export async function middleware(request: NextRequest) {
 
   // Authenticated user
   try {
-    const { payload } = await jwtVerify(authCookie, SECRET);
+    const { payload } = await jwtVerify(authCookie, SECRET) as { payload: JwtPayloadType};
+    console.log(payload);
     const now = Math.floor(Date.now() / 1000);
 
     // 5 min

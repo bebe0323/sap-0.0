@@ -1,12 +1,12 @@
 "use client";
 
-import { TypeUserClient } from "@/app/types/user";
+import { JwtPayloadType } from "@/app/types/user";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Switch } from "@/components/ui/switch"
 import { totpUpdate } from "@/app/actions/totp";
 
-export default function TwoFactorForm({user}: {user: TypeUserClient}) {
+export default function TwoFactorForm({user}: {user: JwtPayloadType}) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [faChecked, setFaChecked] = useState<boolean>(user.totpEnabled);

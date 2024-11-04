@@ -8,22 +8,16 @@ import {
   LogIn,
   UserPlus,
   Contact,
-  BrickWall,
-  BadgePlus
 } from "lucide-react";
-import jwt from "jsonwebtoken";
 
 import SignoutButton from "./SignoutButton";
-import { TypeUserClient } from "@/app/types/user";
-import { signout } from "@/app/actions/auth";
-import { redirect } from "next/navigation";
+import { getJwtPayload } from "@/app/actions/auth";
 
 export default async function NavbarServer() {
-  const cookieStore = cookies();
-  const authCookie = (await cookieStore).get("auth")?.value;
+  let user = await getJwtPayload();
 
-  // Unauthorized user
-  if (!authCookie) {
+  // Unauthorized user OR not completed 2fa
+  if (!user || !user.totpDone) {
     return (
       <div className="navbar-outer">
         {/* TOP */}
@@ -50,18 +44,7 @@ export default async function NavbarServer() {
         </div>
       </div>
     )
-  }
-
-
-  let user: TypeUserClient | null = null;
-  try {
-    const decoded = jwt.verify(authCookie, process.env.JSON_KEY!) as TypeUserClient;
-    user = decoded;
-  } catch (err) {
-    console.error("JWT verification failed:", err);
-    await signout();
-    redirect("/login");
-  }
+  }  
 
   // Authorized user
   return (

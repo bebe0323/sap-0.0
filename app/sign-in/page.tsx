@@ -21,12 +21,17 @@ export default function Page() {
     const formData = new FormData(event.currentTarget);
     try {
       const result = await signin(formData);
+      console.log(result);
       if (!result.success) {
         // show the error message on the form
         setError(result.message || "An unexpected error occurred during sign-in");
       } else {
-        // on successful sign-in redirect to main page
-        router.push("/");
+        if (result.totpDone) {
+          router.push("/");
+        } else {
+          console.log('check-2fa');
+          router.push("/check-2fa");
+        }
       }
     } catch (error: unknown) {
       console.log(error);

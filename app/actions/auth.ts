@@ -20,8 +20,6 @@ export async function signup(formData: FormData) {
     }
     
     await connectMongoDb();
-    console.log('signup');
-    console.log(email, password);
 
     // checking is there an user with same email in the database
     const userDB = await UserModel.findOne({ email: email }).exec();
@@ -57,22 +55,23 @@ export async function signup(formData: FormData) {
   }
 }
 
-export async function setAuthCookie(userDb: TypeUserDb) {
+export async function setAuthCookie(userDb: TypeUserDb, totpDone: boolean) {
   const newToken = await new SignJWT({
     email: userDb.email,
     role: userDb.role,
     userId: userDb._id,
     totpEnabled: userDb.totpEnabled,
+    totpDone: totpDone,
   })
     .setProtectedHeader({ alg: 'HS256' })
-    .setExpirationTime('1h')
+    .setExpirationTime('3h')
     .sign(SECRET);
   
   cookies().set("auth", newToken, {
     httpOnly: true,
     secure: true,
     sameSite: 'strict',
-    maxAge: 3600 // 1 hour
+    maxAge: 3 * 3600 // 3 hours
   });
 }
 
@@ -91,30 +90,22 @@ export async function signin(formData: FormData) {
       throw new Error("User does not exist");
     }
 
-
     // checking password
     const isUser = bcrypt.compareSync(password, userDb.password);
 
     if (!isUser) {
       throw new Error("Wrong password");
     }
-
-
-
-    // const newToken = await new SignJWT({
-    //   email,
-    //   role: userDb.role,
-    //   userId: userDb._id,
-    //   totpEnabled: userDb.totpEnabled,
-    // })
-    //   .setProtectedHeader({ alg: 'HS256' })
-    //   .setExpirationTime('1h')
-    //   .sign(SECRET);
-    
-    await setAuthCookie(userDb);
-    
     console.log("SIGN-IN: " + email);
-    return { success: true };
+
+    if (userDb.totpEnabled) { // totp enabled but not completed
+      console.log('totp enabled user');
+      await setAuthCookie(userDb, false);
+      return { success: true, totpDone: false };
+    } else { // totp not enabled user
+      await setAuthCookie(userDb, true);
+      return { success: true, totpDone: true };
+    }
   } catch (err) {
     if (err instanceof Error) {
       return {
@@ -131,12 +122,12 @@ export async function signin(formData: FormData) {
 }
 
 export async function signout() {
-  (await cookies()).delete("auth");
+  cookies().delete("auth");
 }
 
 export async function getJwtPayload() {
   const cookieStore = cookies();
-  const authCookie = (await cookieStore).get("auth")?.value;
+  const authCookie = cookieStore.get("auth")?.value;
   if (!authCookie) return null;
 
   try {

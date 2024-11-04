@@ -5,6 +5,7 @@ import { getJwtPayload, setAuthCookie } from "./auth";
 import { connectMongoDb } from "./mongodb";
 import mongoose from "mongoose";
 import { UserModel } from "../models/User";
+import { TypeUserDb } from "../types/user";
 
 export async function totpUpdate(faChecked: boolean) {
   try {
@@ -31,8 +32,7 @@ export async function totpUpdate(faChecked: boolean) {
     const update = { totpEnabled: faChecked, totpSecretKey: newTotpSecretKey };
     // updating the user in the database, { new: true } option will return the new updated user
     const res = await UserModel.findOneAndUpdate(filter, update, { new: true });
-    console.log(res);
-    setAuthCookie(res);
+    setAuthCookie(res, true);
 
     return {
       success: true,
@@ -54,5 +54,22 @@ export async function totpUpdate(faChecked: boolean) {
         totpSecretKey: null,
       }
     }
+  }
+}
+
+export async function totpCheck(token: string | undefined) {
+  try {
+    if (!token) throw "empty token";
+    const jwtPayload = await getJwtPayload();
+    if (!jwtPayload) return false;
+    await connectMongoDb();
+    const userDb = await UserModel.findOne({ email: jwtPayload.email }).exec() as TypeUserDb | null;
+    if (!userDb) {
+      return false;
+    }
+    const isValid = totp.check(token, userDb.totpSecretKey!);
+    return isValid;
+  } catch (err) {
+    return false;
   }
 }
