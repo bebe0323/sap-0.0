@@ -35,7 +35,6 @@ export async function signup(formData: FormData) {
     const newUser = new UserModel({
       email: email,
       password: hash,
-      role: 0
     });
     await newUser.save();
     console.log('SIGNUP: ' + email);
@@ -58,7 +57,6 @@ export async function signup(formData: FormData) {
 export async function setAuthCookie(userDb: TypeUserDb, totpDone: boolean) {
   const newToken = await new SignJWT({
     email: userDb.email,
-    role: userDb.role,
     userId: userDb._id,
     totpEnabled: userDb.totpEnabled,
     totpDone: totpDone,
@@ -132,7 +130,6 @@ export async function getJwtPayload() {
 
   try {
     const { payload } = await jwtVerify(authCookie, SECRET) as { payload: JwtPayloadType};
-    // admins role is greater than 0
     return payload;
   } catch (error: unknown) {
     console.log(error);

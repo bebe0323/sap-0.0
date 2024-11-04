@@ -67,20 +67,6 @@ export default async function NavbarServer() {
           </Link>
         </div>
 
-        {/* only visible to admins */}
-        {user.role > 0 && (
-          <div className="mt-2">
-            <p className="navbar-sub-text">ADMIN</p>
-            <Link href={"/todo"} className="navbar-element">
-              <LayoutDashboard className="navbar-icon"/>
-              <p className="">Option 1</p>
-            </Link>
-            <Link href={"/todo"} className="navbar-element">
-              <Database className="navbar-icon"/>
-              <p>Option 2</p>
-            </Link>
-          </div>
-        )}
       </div>
 
       {/* BOTTOM */}
