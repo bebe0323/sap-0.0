@@ -31,7 +31,7 @@ export async function totpUpdate(faChecked: boolean) {
       newTotpSecretKey = authenticator.generateSecret();
     }
     // fields to update in the database
-    let update = { totpEnabled: faChecked, totpSecretKey: newTotpSecretKey };
+    const update = { totpEnabled: faChecked, totpSecretKey: newTotpSecretKey };
     // updating the user in the database, { new: true } option will return the new updated user
     const res = await UserModel.findOneAndUpdate(filter, update, { new: true });
     console.log(res);
