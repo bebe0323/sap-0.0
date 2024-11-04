@@ -30,7 +30,7 @@ export default async function NavbarServer() {
         <div className="flex flex-col">
           <div className="flex my-4">
             <Frame className="navbar-icon" />
-            <p className="text-black font-semibold">ISCM</p>
+            <p className="text-black font-semibold">SAP</p>
           </div>
         </div>
         {/* Bottom */}
@@ -70,7 +70,7 @@ export default async function NavbarServer() {
       <div className="flex flex-col">
         <div className="flex my-4">
           <Frame className="navbar-icon" />
-          <p className="text-black font-semibold">ISCM</p>
+          <p className="text-black font-semibold">SAP</p>
         </div>
         <div className="mt-2">
           <p className="navbar-sub-text">GENERAL</p>
@@ -78,13 +78,9 @@ export default async function NavbarServer() {
             <Users className="navbar-icon" />
             <p>Users</p>
           </Link>
-          <Link href={"/todo"} className="navbar-element">
+          <Link href={"/2fa"} className="navbar-element">
             <LayoutDashboard className="navbar-icon"/>
-            <p className="">Dashboard</p>
-          </Link>
-          <Link href={"/worksites"} className="navbar-element">
-            <BrickWall className="navbar-icon"/>
-            <p>Worksites</p>
+            <p>Two Factor Auth</p>
           </Link>
         </div>
 
@@ -92,10 +88,6 @@ export default async function NavbarServer() {
         {user.role > 0 && (
           <div className="mt-2">
             <p className="navbar-sub-text">ADMIN</p>
-            <Link href={"/pre-start-talk"} className="navbar-element">
-              <Users className="navbar-icon" />
-              <p>pre-start talk</p>
-            </Link>
             <Link href={"/todo"} className="navbar-element">
               <LayoutDashboard className="navbar-icon"/>
               <p className="">Option 1</p>
@@ -103,10 +95,6 @@ export default async function NavbarServer() {
             <Link href={"/todo"} className="navbar-element">
               <Database className="navbar-icon"/>
               <p>Option 2</p>
-            </Link>
-            <Link href={"/worksites/create"} className="navbar-element">
-              <BadgePlus className="navbar-icon" />
-              <p>create worksite</p>
             </Link>
           </div>
         )}

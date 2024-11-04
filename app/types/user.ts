@@ -8,21 +8,27 @@ export type TypeUserDb = {
   password: string;
   role: number;
   createdAt: Date;
+  // TOTP
+  totpEnabled: boolean;
+  totpSecretKey: string | null;
 }
 
 // user type that is exposed to client side
 export type UserClient = {
   name: string;
   email: string;
-  role: number;  // 0 - worker, 1 - admin, 2-ultra admin
+  role: number;  // 
   id: string;
   iat?: number;   // issued at
   exp?: number;   // expiration
+  totpEnabled: boolean;
+  // not exposing totpSecretKey to client side
 }
 
 export type JwtPayloadType = {
   email: string;
   role: number;
-  user_id: string;
+  userId: string;
   exp: number;
+  totpEnabled: boolean;
 }

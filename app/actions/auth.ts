@@ -6,7 +6,7 @@ import { jwtVerify, SignJWT } from 'jose';
 
 import { UserModel } from '../models/User';
 import { connectMongoDb } from './mongodb';
-import { JwtPayloadType } from '../types/user';
+import { JwtPayloadType, TypeUserDb } from '../types/user';
 
 const saltRounds = 10;
 const SECRET = new TextEncoder().encode(process.env.JSON_KEY!);
@@ -67,10 +67,11 @@ export async function signin(formData: FormData) {
     }
     
     await connectMongoDb();
-    const userDb = await UserModel.findOne({ email: email }).exec();
+    const userDb = await UserModel.findOne({ email: email }).exec() as TypeUserDb | null;
     if (!userDb) {
       throw new Error("User does not exist");
     }
+
 
     // checking password
     const isUser = bcrypt.compareSync(password, userDb.password);
@@ -82,7 +83,8 @@ export async function signin(formData: FormData) {
     const newToken = await new SignJWT({
       email,
       role: userDb.role,
-      user_id: userDb._id
+      userId: userDb._id,
+      totpEnabled: userDb.totpEnabled,
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('1h')

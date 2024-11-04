@@ -21,7 +21,15 @@ const userSchema = new Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
+  },
+  totpEnabled: {
+    type: Boolean,
+    default: false,
+  },
+  totpSecretKey: {
+    type: String,
+    default: null,
   }
 });
 
