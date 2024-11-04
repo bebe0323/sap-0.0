@@ -14,7 +14,7 @@ export type TypeUserDb = {
 }
 
 // user type that is exposed to client side
-export type UserClient = {
+export type TypeUserClient = {
   name: string;
   email: string;
   role: number;  // 
