@@ -57,6 +57,25 @@ export async function signup(formData: FormData) {
   }
 }
 
+export async function setAuthCookie(userDb: TypeUserDb) {
+  const newToken = await new SignJWT({
+    email: userDb.email,
+    role: userDb.role,
+    userId: userDb._id,
+    totpEnabled: userDb.totpEnabled,
+  })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setExpirationTime('1h')
+    .sign(SECRET);
+  
+  cookies().set("auth", newToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 3600 // 1 hour
+  });
+}
+
 export async function signin(formData: FormData) {
   try {
     const email = formData.get("email")?.toString();
@@ -80,23 +99,20 @@ export async function signin(formData: FormData) {
       throw new Error("Wrong password");
     }
 
-    const newToken = await new SignJWT({
-      email,
-      role: userDb.role,
-      userId: userDb._id,
-      totpEnabled: userDb.totpEnabled,
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime('1h')
-      .sign(SECRET);
-    
 
-    (await cookies()).set("auth", newToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      maxAge: 3600 // 1 hour
-    });
+
+    // const newToken = await new SignJWT({
+    //   email,
+    //   role: userDb.role,
+    //   userId: userDb._id,
+    //   totpEnabled: userDb.totpEnabled,
+    // })
+    //   .setProtectedHeader({ alg: 'HS256' })
+    //   .setExpirationTime('1h')
+    //   .sign(SECRET);
+    
+    await setAuthCookie(userDb);
+    
     console.log("SIGN-IN: " + email);
     return { success: true };
   } catch (err) {
@@ -113,8 +129,6 @@ export async function signin(formData: FormData) {
     }
   }
 }
-
-
 
 export async function signout() {
   (await cookies()).delete("auth");

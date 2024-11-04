@@ -1,16 +1,13 @@
 "use server";
 
 import { totp, authenticator } from "otplib";
-import { getJwtPayload } from "./auth";
+import { getJwtPayload, setAuthCookie } from "./auth";
 import { connectMongoDb } from "./mongodb";
 import mongoose from "mongoose";
 import { UserModel } from "../models/User";
 
-const secret = 'KVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLD';
-
 export async function totpUpdate(faChecked: boolean) {
   try {
-    console.log('server: ' + faChecked);
     const jwtPayload = await getJwtPayload();
 
     if (!jwtPayload) {
@@ -35,6 +32,7 @@ export async function totpUpdate(faChecked: boolean) {
     // updating the user in the database, { new: true } option will return the new updated user
     const res = await UserModel.findOneAndUpdate(filter, update, { new: true });
     console.log(res);
+    setAuthCookie(res);
 
     return {
       success: true,
@@ -46,12 +44,14 @@ export async function totpUpdate(faChecked: boolean) {
     if (err instanceof Error) {
       return {
         success: false,
-        message: err.message
+        message: err.message,
+        totpSecretKey: null,
       }
     } else {
       return {
         success: false,
-        message: "An unexpected error occurred"
+        message: "An unexpected error occurred",
+        totpSecretKey: null,
       }
     }
   }

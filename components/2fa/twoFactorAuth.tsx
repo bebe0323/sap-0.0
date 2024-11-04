@@ -10,6 +10,7 @@ export default function TwoFactorForm({user}: {user: TypeUserClient}) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [faChecked, setFaChecked] = useState<boolean>(user.totpEnabled);
+  const [totpSecret, setTotpSecret] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -17,9 +18,13 @@ export default function TwoFactorForm({user}: {user: TypeUserClient}) {
     setError(null);
 
     // const formData = new FormData(event.currentTarget);
-    const res = totpUpdate(faChecked);
-
-
+    const res = await totpUpdate(faChecked);
+    // todo: update cookie
+    if (!res.success) {
+      setError(res.message);
+    } else {
+      setTotpSecret(res.totpSecretKey);
+    }
     setIsLoading(false);
   }
 
@@ -30,6 +35,13 @@ export default function TwoFactorForm({user}: {user: TypeUserClient}) {
           <p>Two factor Authenticator</p>
           <p>6 digit authenticator code required when logging in</p>
           <Switch checked={faChecked} onCheckedChange={setFaChecked} />
+          {totpSecret &&
+            <div>
+              <p>Secret key for TOTP (don't share with anyone)</p>
+              {totpSecret}
+            </div>
+          }
+          {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
         </div>
         <Button disabled={isLoading}>Submit</Button>
       </form>
