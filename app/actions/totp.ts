@@ -75,6 +75,9 @@ export async function totpCheck(token: string | undefined) {
     // const isValid = totp.check(token, userDb.totpSecretKey!);
     const serverToken = authenticator.generate(userDb.totpSecretKey!);
     // console.log('servertoken: ' + serverToken);
+    if (serverToken === token) {
+      await setAuthCookie(userDb, true);
+    }
     return serverToken === token;
     // return isValid;
   } catch (err) {
