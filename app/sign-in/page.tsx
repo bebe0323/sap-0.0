@@ -54,7 +54,10 @@ export default function Page() {
             </div>
             <Input name="password" type="password" placeholder="password" required />
           </div>
-          <Button disabled={isLoading} className="mt-4 w-full">Sign in</Button>
+          <Button disabled={isLoading} className="mt-4 w-full">
+            {isLoading && <p>Signing in</p>}
+            {!isLoading && <p>Sign in</p>}
+          </Button>
         </form>
         <div className="flex justify-center text-sm mt-4">
           <p className="mr-2">Don&apos;t have an accoutn?</p>
