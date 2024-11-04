@@ -1,3 +1,8 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  // ignore files that is added by ui.shadcn.com
+  "ignorePatterns": ["/components/ui/*", "/app/users/data-table.tsx"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "off"
+  }
 }
