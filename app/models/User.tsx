@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-const { Schema } = mongoose;
+import mongoose, { Model, Schema } from "mongoose";
 
 const userSchema = new Schema({
   email: {

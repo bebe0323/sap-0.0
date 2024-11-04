@@ -4,6 +4,7 @@ import { TypeUserClient } from "@/app/types/user";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Switch } from "@/components/ui/switch"
+import { totpUpdate } from "@/app/actions/totp";
 
 export default function TwoFactorForm({user}: {user: TypeUserClient}) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -15,11 +16,11 @@ export default function TwoFactorForm({user}: {user: TypeUserClient}) {
     setIsLoading(true);
     setError(null);
 
-    const formData = new FormData(event.currentTarget);
-    console.log(faChecked);
+    // const formData = new FormData(event.currentTarget);
+    const res = totpUpdate(faChecked);
+
 
     setIsLoading(false);
-
   }
 
   return (

@@ -93,9 +93,9 @@ export async function signin(formData: FormData) {
 
     (await cookies()).set("auth", newToken, {
       httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 3600 // 1 hour
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 3600 // 1 hour
     });
     console.log("SIGN-IN: " + email);
     return { success: true };

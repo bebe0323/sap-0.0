@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
       const response = NextResponse.next();
       response.cookies.set('auth', newToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
         sameSite: 'strict',
         maxAge: 3600 // 1 hour
       })
