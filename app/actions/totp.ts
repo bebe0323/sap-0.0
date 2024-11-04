@@ -1,6 +1,6 @@
 "use server";
 
-import { totp, authenticator } from "otplib";
+import { authenticator } from "otplib";
 import { getJwtPayload, setAuthCookie } from "./auth";
 import { connectMongoDb } from "./mongodb";
 import mongoose from "mongoose";
@@ -57,10 +57,11 @@ export async function totpUpdate(faChecked: boolean) {
   }
 }
 
+// const secondsSinceEpoch = Math.floor(Date.now() / 1000);
+// console.log(secondsSinceEpoch);
+
 export async function totpCheck(token: string | undefined) {
   try {
-    const secondsSinceEpoch = Math.floor(Date.now() / 1000);
-    console.log(secondsSinceEpoch);
     //
     if (!token) throw "empty token";
     const jwtPayload = await getJwtPayload();
@@ -70,16 +71,11 @@ export async function totpCheck(token: string | undefined) {
     if (!userDb) {
       return false;
     }
-    // console.log('user typed: ' + token);
-    // console.log('db secretkey' + userDb.totpSecretKey);
-    // const isValid = totp.check(token, userDb.totpSecretKey!);
     const serverToken = authenticator.generate(userDb.totpSecretKey!);
-    // console.log('servertoken: ' + serverToken);
     if (serverToken === token) {
       await setAuthCookie(userDb, true);
     }
     return serverToken === token;
-    // return isValid;
   } catch (err) {
     return false;
   }

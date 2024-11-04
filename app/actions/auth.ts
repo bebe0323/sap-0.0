@@ -8,7 +8,6 @@ import { UserModel } from '../models/User';
 import { connectMongoDb } from './mongodb';
 import { JwtPayloadType, TypeUserDb } from '../types/user';
 
-const saltRounds = 10;
 const SECRET = new TextEncoder().encode(process.env.JSON_KEY!);
 
 export async function signup(formData: FormData) {
@@ -18,9 +17,7 @@ export async function signup(formData: FormData) {
     if (!email || !password) {
       throw new Error("Email or password is empty");
     }
-    
     await connectMongoDb();
-
     // checking is there an user with same email in the database
     const userDB = await UserModel.findOne({ email: email }).exec();
     if (userDB) {
@@ -28,6 +25,7 @@ export async function signup(formData: FormData) {
     }
 
     // ecrypting password
+    const saltRounds = 10;
     const salt = bcrypt.genSaltSync(saltRounds);
     const hash = bcrypt.hashSync(password, salt);
 
@@ -77,27 +75,20 @@ export async function signin(formData: FormData) {
   try {
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
-    
     if (!email || !password) {
       throw new Error("email or password is empty");
     }
-    
     await connectMongoDb();
     const userDb = await UserModel.findOne({ email: email }).exec() as TypeUserDb | null;
     if (!userDb) {
       throw new Error("User does not exist");
     }
-
     // checking password
     const isUser = bcrypt.compareSync(password, userDb.password);
-
     if (!isUser) {
       throw new Error("Wrong password");
     }
-    console.log("SIGN-IN: " + email);
-
     if (userDb.totpEnabled) { // totp enabled but not completed
-      console.log('totp enabled user');
       await setAuthCookie(userDb, false);
       return { success: true, totpDone: false };
     } else { // totp not enabled user
