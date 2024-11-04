@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { totpCheck } from "../actions/totp";
 
-export default async function Page() {
+export default function Page() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 

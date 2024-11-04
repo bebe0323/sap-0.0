@@ -5,7 +5,7 @@ import TwoFactorForm from "@/components/2fa/twoFactorAuth";
 
 // page for setting up 2fa
 export default async function Page() {
-  let user = await getJwtPayload();
+  const user = await getJwtPayload();
   if (!user) redirect('/sign-in');
   return (
     <div>
