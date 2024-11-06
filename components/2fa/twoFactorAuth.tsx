@@ -17,6 +17,8 @@ export default function TwoFactorForm({user}: {user: JwtPayloadType}) {
     setIsLoading(true);
     setError(null);
 
+    console.log('here');
+
     // const formData = new FormData(event.currentTarget);
     const res = await totpUpdate(faChecked);
     // todo: update cookie
